@@ -1,2 +1,4 @@
 from create_dd_df import create_dd_df
 from triple_plot_df import triple_plot_df
+from get_shot_title import get_shot_title
+from overview_plot import overview_plot

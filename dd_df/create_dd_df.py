@@ -2,6 +2,7 @@ import pandas as pd
 from getsig import getsig
 from scipy.interpolate import interp1d
 from scipy.signal import medfilt
+import numpy as np
 
 def create_dd_df(shotnr=30554, tBegin=1.0, tEnd=6.5, dt=0.1,
                  dne_data=['DNE','neDdel_2',17,'sfp',21],
@@ -31,17 +32,29 @@ def create_dd_df(shotnr=30554, tBegin=1.0, tEnd=6.5, dt=0.1,
     dne = getsig(shotnr, nev_shotfile, nev_signal, exper=nev_experiment)
     
     #Interpolations
-    interp_beta = interp1d(beta.time, beta.data)
-    beta_df_entry = interp_beta(times)
+    try:
+        interp_beta = interp1d(beta.time, beta.data)
+        beta_df_entry = interp_beta(times)
+    except:
+        beta_df_entry = np.zeros_like(times)
 
-    interp_wmhd = interp1d(wmhd.time, wmhd.data)
-    wmhd_df_entry = interp_wmhd(times)
-
-    interp_taue = interp1d(taue.time, taue.data)
-    taue_df_entry = interp_taue(times)
-
-    interp_h98 = interp1d(h98.time, h98.data[:,h98y2_index])
-    h98_df_entry = interp_h98(times)
+    try:
+        interp_wmhd = interp1d(wmhd.time, wmhd.data)
+        wmhd_df_entry = interp_wmhd(times)
+    except:
+        wmhd_df_entry = np.zeros_like(times)
+        
+    try:
+        interp_taue = interp1d(taue.time, taue.data)
+        taue_df_entry = interp_taue(times)
+    except:
+        taue_df_entry = np.zeros_like(times)
+                
+    try:
+        interp_h98 = interp1d(h98.time, h98.data[:,h98y2_index])
+        h98_df_entry = interp_h98(times)
+    except:
+        h98_df_entry = np.zeros_like(times)
 
     interp_nev = interp1d(dne.time, medfilt(dne.data[:, nev_channel], medfilt_pts))
     nev_df_entry = interp_nev(times)
